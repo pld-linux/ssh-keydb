@@ -1,11 +1,13 @@
 Summary:	OpenSSH public key management tool
 Name:		ssh-keydb
-Version:	0.2
+Version:	1.0
 Release:	0.1
 License:	GPL v3
 Group:		Applications
-Source0:	https://pypi.python.org/packages/2.7/s/ssh-keydb/ssh_keydb-%{version}dev-py2.7.egg
-# Source0-md5:	bdee78b4a62515e72cb9244efdf5c566
+#Source0:	https://pypi.python.org/packages/2.7/s/ssh-keydb/ssh_keydb-%{version}dev-py2.7.egg
+# tar cjf ssh-keydb.tar ssh-keydb --exclude-vcs
+Source0:	%{name}.tar.bz2
+# Source0-md5:	d1a9e17cf978a8d61fea6f4ea467df16
 URL:		https://code.google.com/p/ssh-keydb/
 BuildRequires:	python >= 1:2.7
 BuildRequires:	rpm-pythonprov
@@ -18,16 +20,21 @@ OpenSSH public key management tool.
 
 %prep
 %setup -qc
+mv ssh-keydb/* .
 
 mv ssh_keydb/COPYING .
+
+%build
+%{__python} setup.py build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{py_sitescriptdir}
-cp -a ssh_keydb $RPM_BUILD_ROOT%{py_sitescriptdir}
+%{__python} setup.py install \
+	--record=INSTALLED_FILES \
+	--single-version-externally-managed \
+	--root=$RPM_BUILD_ROOT
 
-%py_ocomp $RPM_BUILD_ROOT%{py_sitescriptdir}
-%py_comp $RPM_BUILD_ROOT%{py_sitescriptdir}
 %py_postclean
 
 %clean
@@ -35,7 +42,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/ssh-keydb
 %dir %{py_sitescriptdir}/ssh_keydb
 %{py_sitescriptdir}/ssh_keydb/*.py[co]
 %dir %{py_sitescriptdir}/ssh_keydb/plugins
 %{py_sitescriptdir}/ssh_keydb/plugins/*.py[co]
+%{py_sitescriptdir}/ssh_keydb_server-%{version}-py*.egg-info
