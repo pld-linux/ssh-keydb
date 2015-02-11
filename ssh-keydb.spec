@@ -1,7 +1,7 @@
 Summary:	OpenSSH public key management tool
 Name:		ssh-keydb
 Version:	1.0
-Release:	0.1
+Release:	0.3
 License:	GPL v3
 Group:		Applications
 #Source0:	https://pypi.python.org/packages/2.7/s/ssh-keydb/ssh_keydb-%{version}dev-py2.7.egg
@@ -32,10 +32,12 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{py_sitescriptdir}
 %{__python} setup.py install \
 	--record=INSTALLED_FILES \
+	--skip-build \
+	--optimize=2 \
 	--single-version-externally-managed \
 	--root=$RPM_BUILD_ROOT
 
-%py_postclean
+#py_postclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -48,3 +50,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{py_sitescriptdir}/ssh_keydb/plugins
 %{py_sitescriptdir}/ssh_keydb/plugins/*.py[co]
 %{py_sitescriptdir}/ssh_keydb_server-%{version}-py*.egg-info
+
+%{py_sitescriptdir}/ssh_keydb/*.py
+%{py_sitescriptdir}/ssh_keydb/plugins/*.py
